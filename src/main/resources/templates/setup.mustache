@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>커넥트페이 테스트</title>
+    <link rel="stylesheet" href="/css/common.css"/>
+
+    <script src="https://js.tosspayments.com/v1/openpay" type="text/javascript"></script>
+</head>
+<body>
+
+<div class="section">
+    <h3>커넥트페이 테스트 사용자 정보 설정</h3>
+</div>
+
+<form action="/setup" method="POST">
+    <p>
+        Customer Key: <input name="customerKey" value="{{#userData}}{{userData.customerKey}}{{/userData}}"/>
+    </p>
+
+    <p>
+        이름: <input name="name"  value="{{#userData}}{{userData.name}}{{/userData}}"/>
+    </p>
+
+    <p>
+        주민번호 앞 7자리: <input name="rrn" size="7"  value="{{#userData}}{{userData.rrn}}{{/userData}}"/>
+    </p>
+
+    <p>
+        휴대전화번호: <input name="phoneNumber" size="11"  value="{{#userData}}{{userData.phoneNumber}}{{/userData}}"/>
+    </p>
+
+    <p>
+        CI(연계정보): <textarea name="ci" rows="3" cols="30">{{#userData}}{{userData.ci}}{{/userData}}</textarea>
+    </p>
+
+    <p>
+        <button type="submit">저장</button>
+    </p>
+
+</form>
+<script type="text/javascript">
+</script>
+
+
+</body>
+</html>

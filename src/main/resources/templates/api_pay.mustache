@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>커넥트페이 테스트</title>
+    <link rel="stylesheet" href="/css/common.css"/>
+
+    <script src="https://js.tosspayments.com/v1/openpay" type="text/javascript"></script>
+</head>
+<body>
+
+<div class="section">
+    <h3>커넥트페이 API - 카드 결제 테스트</h3>
+</div>
+
+<form action="/api-pay" method="POST">
+    <p>등록된 카드 목록</p>
+    <div>
+        {{#cards}}
+            <p>
+                <input type="radio" name="methodId" id="{{id}}" value="{{id}}">
+                <label for="{{id}}">{{cardName}} / {{cardNumber}}</label>
+            </p>
+        {{/cards}}
+    </div>
+
+    <div>-----</div>
+
+    <p>
+        주문번호: <input id="orderId" name="orderId">
+    </p>
+
+    <p>
+        결제금액: <input name="amount" value="190">
+    </p>
+
+    <p>
+        주문명: <input name="orderName" value="테스트상품"/>
+    </p>
+
+    <div>-----</div>
+
+    <p>
+        <button type="submit">결제 하기</button>
+    </p>
+</form>
+<script>
+    document.getElementById('orderId').value = new Date().getTime();
+</script>
+</body>
+</html>

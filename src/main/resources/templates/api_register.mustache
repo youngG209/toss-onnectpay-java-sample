@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>커넥트페이 테스트</title>
+    <link rel="stylesheet" href="/css/common.css"/>
+
+    <script src="https://js.tosspayments.com/v1/openpay" type="text/javascript"></script>
+</head>
+<body>
+
+<div class="section">
+    <h3>커넥트페이 API - 카드 등록 테스트</h3>
+</div>
+
+<form action="/api-register" method="POST">
+    <p>
+        카드번호: <input name="cardNum1" size="4"> <input name="cardNum2" size="4"> <input type="password" name="cardNum3" size="4"> <input type="password" name="cardNum4" size="4">
+    </p>
+
+    <p>
+        유효기간 (MM/YY): <input type="password" name="exp" size="4"/>
+    </p>
+
+    <p>
+        CVC: <input type="password" name="cvc" size="4"/>
+    </p>
+
+    <p>
+        카드비밀번호: <input type="password" name="password" size="4"/>
+    </p>
+
+    <div>-----</div>
+
+    <p>
+        <button type="submit">등록</button>
+    </p>
+
+</form>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>커넥트페이 테스트</title>
+    <link rel="stylesheet" href="/css/common.css"/>
+
+    <script src="https://js.tosspayments.com/v1/connectpay" type="text/javascript"></script>
+</head>
+<body>
+
+<div class="section">
+    <h3>커넥트페이 UI - JS SDK 연동 테스트</h3>
+</div>
+
+<p>
+    <button onclick="addPaymentMethod();">1. 결제 수단 추가</button>
+</p>
+
+<p>
+    <button onclick="requestPayment();">2. 결제 실행</button>
+</p>
+
+<p>
+    <button onclick="openSettings();">3. 설정</button>
+</p>
+
+
+<script type="text/javascript">
+    var connectpay = ConnectPay("test_ck_OEP59LybZ8Bdv6A1JxkV6GYo7pRe", "{{userData.customerKey}}", {
+        redirectUrl: "http://localhost:8080/callback_auth"
+    });
+
+    function addPaymentMethod() {
+        connectpay.addPaymentMethod().then(
+                function (methodCards) {
+                    console.log(methodCards)
+                });
+    }
+
+    function requestPayment() {
+        connectpay.requestPayment({
+            methodId: "m_Q1aVZdzAv4gWg8w6",
+            orderId: new Date().getTime(),
+            orderName: '토스 티셔츠 외 2건',
+            amount: 190,
+            successUrl: location.origin + "/payment_success",
+            failUrl: location.origin + "/payment_fail",
+            customerEmail: 'customer@example.com',
+            shippingAddress: '서울특별시 강남구 역삼동 647-9 15층'
+        });
+    }
+
+    function openSettings() {
+        connectpay.openSettings();
+    }
+</script>
+
+
+</body>
+</html>
