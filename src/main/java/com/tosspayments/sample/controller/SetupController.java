@@ -2,8 +2,6 @@ package com.tosspayments.sample.controller;
 
 import com.tosspayments.sample.domain.MerchantDataStore;
 import com.tosspayments.sample.domain.UserData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,8 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class SetupController {
-    private static final Logger logger = LoggerFactory.getLogger(SetupController.class);
-
     private final MerchantDataStore merchantDataStore;
 
     @Autowired

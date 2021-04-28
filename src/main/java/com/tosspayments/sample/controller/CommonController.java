@@ -17,12 +17,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Controller
 public class CommonController {
-    private static final String TEST_API_KEY = "test_ak_ZORzdMaqN3wQd5k6ygr5AkYXQGwy";
     private static final String ACCESS_TOKEN_ENDPOINT = "https://api.tosspayments.com/v1/connectpay/authorizations/access-token";
-    private static final String PAYMENT_ENDPOINT = "https://api.tosspayments.com/v1/payments/";
+    private static final String PAYMENT_ENDPOINT = "https://api.tosspayments.com/v1/connectpay/payments/";
+
+    private static final String TEST_SECRET_KEY = "test_ak_ZORzdMaqN3wQd5k6ygr5AkYXQGwy";
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -37,19 +39,22 @@ public class CommonController {
 
     // Redirect URL에 대한 가맹점 서버 구현 부분
     @GetMapping("/callback_auth")
-    public String authCallback(Model model, @RequestParam String code,
+    public String authCallback(Model model, @RequestParam String code, @RequestParam String customerKey,
                                HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBasicAuth(TEST_API_KEY, "");
+        headers.setBasicAuth(TEST_SECRET_KEY, "");
 
         Map<String, Object> payloadMap = new HashMap<>();
         payloadMap.put("code", code);
 
         UserData userData = merchantDataStore.getUserData(servletRequest);
+        if (!userData.getCustomerKey().equals(customerKey)) {
+            throw new RuntimeException("invalid customer session");
+        }
 
-        payloadMap.put("customerKey", userData.getCustomerKey()); // 가맹점 유저 식별자
+        payloadMap.put("customerKey", customerKey); // 가맹점 유저 식별자
 
         // 가맹점이 본인 인증 정보를 보유하고 있을때 선택적으로 연동
         Map<String, String> identityMap = new HashMap<>();
@@ -66,12 +71,12 @@ public class CommonController {
             ResponseEntity<JsonNode> response = restTemplate.postForEntity(ACCESS_TOKEN_ENDPOINT, entity, JsonNode.class);
 
             if (response.getStatusCode() == HttpStatus.OK) {
-                merchantDataStore.saveAccessToken(response.getBody().get("accessToken").asText(), servletResponse);
+                merchantDataStore.saveAccessToken(Objects.requireNonNull(response.getBody()).get("accessToken").asText(), servletResponse);
 
                 model.addAttribute("message", "인증 되었습니다.");
 
             } else {
-                model.addAttribute("message", response.getBody().get("message").asText());
+                model.addAttribute("message", Objects.requireNonNull(response.getBody()).get("message").asText());
             }
         } catch (RestClientResponseException e) {
             model.addAttribute("message", e.getMessage());
@@ -81,14 +86,16 @@ public class CommonController {
     }
 
     @GetMapping("/payment_success")
-    public String confirm(Model model, @RequestParam String paymentKey, @RequestParam String orderId, @RequestParam Long amount) throws Exception {
+    public String confirm(Model model, @RequestParam String paymentKey, @RequestParam String orderId, @RequestParam Long amount,
+                          HttpServletRequest request) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBasicAuth(TEST_API_KEY, "");
+        headers.setBasicAuth(TEST_SECRET_KEY, "");
 
         Map<String, Object> payloadMap = new HashMap<>();
         payloadMap.put("orderId", orderId);
         payloadMap.put("amount", amount);
+        payloadMap.put("customerKey", merchantDataStore.getUserData(request).getCustomerKey());
 
         HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(payloadMap), headers);
 
